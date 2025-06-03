@@ -1,0 +1,19 @@
+# This file can be used to install addons on the Firefox instance of Exegol.
+# The download links of the addons to be installed can be listed in this file (ie: https://addons.mozilla.org/fr/firefox/addon/foxyproxy-standard/).
+# All addons listed below will be downloaded and installed automatically when creating a new Exegol container.
+https://addons.mozilla.org/fr/firefox/addon/wappalyzer/
+https://addons.mozilla.org/fr/firefox/addon/bitwarden-password-manager/
+https://addons.mozilla.org/fr/firefox/addon/pwnfox/
+https://addons.mozilla.org/fr/firefox/addon/hacktools/
+https://addons.mozilla.org/fr/firefox/addon/shodan-addon/
+https://addons.mozilla.org/fr/firefox/addon/ghunt-companion/
+https://addons.mozilla.org/fr/firefox/addon/ublock-origin/
+https://addons.mozilla.org/fr/firefox/addon/traduzir-paginas-web/
+https://addons.mozilla.org/fr/firefox/addon/cookie-quick-manager/
+https://addons.mozilla.org/fr/firefox/addon/user-agent-string-switcher/
+https://addons.mozilla.org/fr/firefox/addon/easy-xss/
+https://addons.mozilla.org/fr/firefox/addon/web-developer/
+https://addons.mozilla.org/fr/firefox/addon/penetration-testing-kit/
+https://addons.mozilla.org/fr/firefox/addon/firefox-hackbar/
+https://addons.mozilla.org/fr/firefox/addon/what-cms-is-this/
+https://addons.mozilla.org/fr/firefox/addon/dotgit/

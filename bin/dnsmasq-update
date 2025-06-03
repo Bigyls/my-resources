@@ -1,0 +1,159 @@
+#!/bin/bash
+
+# Usage instructions
+usage() {
+    echo "Usage:"
+    echo "  $0 add <ip> <domain>   # Add a domain with specified ip"
+    echo "  $0 remove <domain>     # Remove a domain"
+    echo "  $0 list                # List available TLDs"
+    echo "  $0 list <tld>          # List domains under a specified TLD"
+    exit 1
+}
+
+# Check if running as root
+if [[ "$EUID" -ne 0 ]]; then
+    echo -e "\033[0;31mERROR: Please run as root\033[0m"
+    exit 1
+fi
+
+# Constants
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+ENDCOLOR="\033[0m"
+config_path="/etc/dnsmasq.d/"
+
+# Function to display messages
+log_message() {
+    local message=$1
+    local color=$2
+    echo -e "${color}${message}${ENDCOLOR}"
+}
+
+# Get TLD from domain
+get_tld() {
+    dom_array=(`/usr/bin/echo $domain | /usr/bin/tr '.' '\n'`)
+    echo ${dom_array[${#dom_array[@]}-1]}
+
+}
+
+# Check if the host is a valid IP address
+is_valid_ip() {
+    local ip=$1
+    [[ $ip =~ ^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
+}
+
+restart_dnsmasq() {
+    dnsmasq
+}
+
+# Add domain to dnsmasq
+add_domain() {
+    if [[ $# -ne 3 ]]; then
+        log_message "[-] Incorrect number of arguments." "$RED"
+        usage
+    fi
+
+    local host=$2
+    local domain=$3
+
+    # Validate the host is a valid IP address
+    if ! is_valid_ip "$host"; then
+        log_message "[-] Invalid IP address: $host." "$RED"
+        exit 1
+    fi
+
+    local tld=$(get_tld "$domain")
+    local config_file="${config_path}${tld}.conf"
+
+    [[ ! -e "$config_file" ]] && echo "server=8.8.8.8" > "$config_file"
+
+    if grep -q "${domain}" "$config_file"; then
+        log_message "[+] Domain already exists." "$GREEN"
+        exit 1
+    fi
+
+    echo "address=/.${domain}/${host}" >> "$config_file"
+    restart_dnsmasq
+
+    if grep -q "${domain}" "$config_file"; then
+        log_message "[+] Successful Update." "$GREEN"
+    else
+        log_message "[-] Failed to update." "$RED"
+    fi
+}
+
+# Remove domain from dnsmasq
+remove_domain() {
+    if [[ $# -ne 2 ]]; then
+        log_message "[-] Incorrect number of arguments." "$RED"
+        usage
+    fi
+
+    local domain=$2
+    local tld=$(get_tld "$domain")
+    local config_file="${config_path}${tld}.conf"
+
+    if [[ -e "$config_file" ]]; then
+        sed -i "/${domain}/d" "$config_file"
+        [[ $(wc -l < "$config_file") -eq 1 ]] && rm "$config_file"
+        restart_dnsmasq
+
+        if ! grep -q "${domain}" "$config_file" 2>/dev/null; then
+            log_message "[+] Successful Update." "$GREEN"
+        else
+            log_message "[-] Failed to update." "$RED"
+        fi
+    else
+        log_message "[+] Domain not found." "$GREEN"
+    fi
+}
+
+# List domains from dnsmasq
+list_domains() {
+    if [[ $# -eq 1 ]]; then
+        local tlds=($(ls ${config_path} | awk -F'.' '{print $1}'))
+
+        if [[ ${#tlds[@]} -eq 0 ]]; then
+            log_message "[-] No TLDs found." "$RED"
+            exit 1
+        fi
+
+        log_message "[+] TLDs: ${tlds[@]}" "$GREEN"
+        exit 0
+    fi
+
+    if [[ $# -eq 2 ]]; then
+        local domain=$2
+        local tld=$(get_tld "$domain")
+        local config_file="${config_path}${tld}.conf"
+
+        if [[ -e "$config_file" ]]; then
+            echo -e "${GREEN}[+] Domains:${ENDCOLOR}\n$(grep -v 'server=' "$config_file" | awk -F'=/' '{print $2}' | sed 's/\// /g')"
+        else
+            log_message "[-] TLD not found." "$RED"
+            exit 1
+        fi
+    fi
+}
+
+# Main logic using a case statement
+if [[ $# -eq 0 ]]; then
+    usage
+fi
+
+case $1 in
+    add)
+        add_domain "$@"
+        ;;
+    remove)
+        remove_domain "$@"
+        ;;
+    list)
+        list_domains "$@"
+        ;;
+    *)
+        log_message "[-] Invalid command." "$RED"
+        usage
+        ;;
+esac
+
