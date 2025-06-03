@@ -1,0 +1,5 @@
+# equivalent to "ssh -o StrictHostKeyChecking=no -o UserKnownHostFiles=/dev/null user@host" for CTFs
+Host 10.10.* *.htm *.thm
+StrictHostKeyChecking   no
+UserKnownHostsFile      /dev/null
+HostKeyAlgorithms       ssh-rsa
