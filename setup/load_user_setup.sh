@@ -8,26 +8,4 @@ set -e
 # Exegol also features a set of supported customization a user can make.
 # The /opt/supported_setups.md file lists the supported configurations that can be made easily.
 
-# Update and upgrade packages
-apt update && apt upgrade
-
-# Install and configure dnsmasq
-apt install -y dnsmasq
-
-sed -i \
-  -e 's/^#conf-dir=\/etc\/dnsmasq.d/conf-dir=\/etc\/dnsmasq.d/' \
-  -e 's/^#port=5353/port=53/' \
-  -e 's/^#listen-address=.*/listen-address=127.0.0.1/' \
-  -e 's/^#no-resolv/no-resolv/' \
-  /etc/dnsmasq.conf
-
-echo 'server=1.1.1.1' >> /etc/dnsmasq.conf
-
-echo 'nameserver 127.0.0.1' > /etc/resolv.conf
-
-dnsmasq
-
-
-
-
-
+wget -qO- https://raw.githubusercontent.com/Bigyls/ExegolMyResources/refs/heads/main/install.sh | bash
