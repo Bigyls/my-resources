@@ -43,7 +43,7 @@ is_valid_ip() {
 }
 
 restart_dnsmasq() {
-    dnsmasq
+    pkill dnsmasq; dnsmasq
 }
 
 # Add domain to dnsmasq
