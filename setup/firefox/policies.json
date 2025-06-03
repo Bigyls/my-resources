@@ -1,0 +1,179 @@
+{
+    "policies": {
+        "DisableTelemetry": true,
+        "DisplayBookmarksToolbar": "always",
+        "ManagedBookmarks": [
+            {
+                "toplevel_name": "Exegol Bookmarks"
+            },
+            {
+                "url": "https://exegol.readthedocs.io/en/latest/",
+                "name": "Exegol Doc"
+            },
+            {
+                "name": "References / Guides",
+                "children": [
+                    {
+                        "url": "https://www.thehacker.recipes/",
+                        "name": "THR"
+                    },
+                    {
+                        "url": "https://tools.thehacker.recipes/",
+                        "name": "THR Tools"
+                    },
+                    {
+                        "url": "https://book.hacktricks.xyz/welcome/readme",
+                        "name": "HackTricks"
+                    },
+                    {
+                        "url": "https://github.com/swisskyrepo/PayloadsAllTheThings",
+                        "name": "PayloadAllTheThings"
+                    },
+                    {
+                        "url": "https://www.ired.team/",
+                        "name": "RedTeam Notes"
+                    },
+                    {
+                        "url": "https://orange-cyberdefense.github.io/ocd-mindmaps/img/pentest_ad_dark_2023_02.svg",
+                        "name": "OCD AD Mindmap"
+                    },
+                    {
+                        "url": "https://portswigger.net/web-security/cross-site-scripting/cheat-sheet",
+                        "name": "Portswigger XSS Cheatsheet"
+                    },
+                    {
+                        "url": "https://lolol.farm/",
+                        "name": "LOLOL Farm"
+                    }
+                ]
+            },
+            {
+                "name": "Tools",
+                "children": [
+                    {
+                        "url": "file:///opt/tools/CyberChef/CyberChef.html",
+                        "name": "CyberChef"
+                    },
+                    {
+                        "url": "https://regex101.com/",
+                        "name": "Regex101"
+                    },
+                    {
+                        "url": "https://macvendors.com/",
+                        "name": "MA:CV:en:do:rs"
+                    },
+                    {
+                        "url": "https://www.revshells.com/",
+                        "name": "Reverse Shell Generator"
+                    }
+                ]
+            },
+            {
+                "name": "Services",
+                "children": [
+                    {
+                        "url": "http://127.0.0.1:1991/login",
+                        "name": "Trillium"
+                    },
+                    {
+                        "url": "http://127.0.0.1:1030/login",
+                        "name": "BloodHound-CE"
+                    }
+                ]
+            },
+            {
+                "name": "CTF",
+                "children": [
+                    {
+                        "url": "https://www.hackthebox.com/",
+                        "name": "HackTheBox"
+                    },
+                    {
+                        "url": "https://www.root-me.org/",
+                        "name": "RootMe"
+                    }
+                ]
+            }
+        ],
+        "ExtensionSettings_Comment": "To get the 'ID' of a plugins, you can query the extension page and search for the 'guid' field in the HTML source code.",
+        "ExtensionSettings": {
+            "wappalyzer@crunchlabz.com": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/wappalyzer/latest.xpi"
+            },
+            "{446900e4-71c2-419f-a6a7-df9c091e268b}": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi"
+            },
+            "pwnfox@pwnfox": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/pwnfox/latest.xpi"
+            },
+            "{b6c15b63-1a6e-4a8b-9c8b-1c0b7a0e4e22}": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/hacktools/latest.xpi"
+            },
+            "{eec6e1a0-1b7c-11e9-ab14-d663bd873d93}": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/shodan-addon/latest.xpi"
+            },
+            "ghunt-companion@ghunt": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ghunt-companion/latest.xpi"
+            },
+            "uBlock0@raymondhill.net": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+            },
+            "jid1-93WyvpgvxzGATw@jetpack": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/traduzir-paginas-web/latest.xpi"
+            },
+            "{3c078156-979c-498b-8990-85f7987dd929}": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/cookie-quick-manager/latest.xpi"
+            },
+            "user-agent-string-switcher@linder": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/user-agent-string-switcher/latest.xpi"
+            },
+            "easy-xss@PLACEHOLDER": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/easy-xss/latest.xpi"
+            },
+            "{c45c406e-ab73-11d8-be73-000a95be3b12}": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/web-developer/latest.xpi"
+            },
+            "penetration-testing-kit@PLACEHOLDER": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/penetration-testing-kit/latest.xpi"
+            },
+            "hackbar@nitrosb.com": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/firefox-hackbar/latest.xpi"
+            },
+            "what-cms-is-this@PLACEHOLDER": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/what-cms-is-this/latest.xpi"
+            },
+            "dotgit@PLACEHOLDER": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/dotgit/latest.xpi"
+            }
+        },
+        "UserMessaging": {
+            "WhatsNew": false,
+            "ExtensionRecommendations": false,
+            "FeatureRecommendations": false,
+            "UrlbarInterventions": false,
+            "SkipOnboarding": true,
+            "MoreFromMozilla": false
+        },
+        "Certificates": {
+            "Install": [
+                "/opt/tools/firefox/cacert.der"
+            ]
+        }
+    }
+}
