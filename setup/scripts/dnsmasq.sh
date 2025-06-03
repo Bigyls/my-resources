@@ -2,14 +2,11 @@
 
 set -e
 
-sed -i \
-  -e 's/^#conf-dir=\/etc\/dnsmasq.d/conf-dir=\/etc\/dnsmasq.d/' \
-  -e 's/^#port=5353/port=53/' \
-  -e 's/^#listen-address=.*/listen-address=127.0.0.1/' \
-  -e 's/^#no-resolv/no-resolv/' \
-  /etc/dnsmasq.conf
+cp "$(dirname "$0")/../dnsmasq/dnsmasq.conf" /etc/dnsmasq.conf
 
-echo 'server=1.1.1.1' >> /etc/dnsmasq.conf
-echo 'nameserver 127.0.0.1' > /etc/resolv.conf
+cp "$(dirname "$0")/../dnsmasq/hosts" /etc/hosts
 
-dnsmasq 
+sed -i "s#exegol-xxx#$(hostname)#" "$(dirname "$0")/../dnsmasq/resolv.conf"
+cp "$(dirname "$0")/../dnsmasq/resolv.conf" /etc/resolv.conf
+
+dnsmasq

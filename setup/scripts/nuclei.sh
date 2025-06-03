@@ -2,4 +2,4 @@
 
 set -e
 
-nuclei -update-templates -t /opt/my-resources/nuclei/templates
+nuclei -update-templates -t "$(dirname "$0")/../nuclei/templates"
