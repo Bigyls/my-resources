@@ -9,10 +9,10 @@ set -e
 # The /opt/supported_setups.md file lists the supported configurations that can be made easily.
 
 # Update and upgrade packages
-sudo apt update && sudo apt upgrade
+apt update && apt upgrade
 
 # Install and configure dnsmasq
-sudo apt install -y dnsmasq
+apt install -y dnsmasq
 
 sed -i \
   -e 's/^#conf-dir=\/etc\/dnsmasq.d/conf-dir=\/etc\/dnsmasq.d/' \
