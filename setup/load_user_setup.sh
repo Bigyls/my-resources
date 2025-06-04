@@ -9,13 +9,31 @@ SCRIPTS_DIR="$(dirname "$0")/scripts"
 echo "==== Setup started at $(date) ====" > "$LOG_FILE"
 
 pids=()
-logfiles=()
+script_logfiles=()
 script_names=()
-for script in "$SCRIPTS_DIR"/*.sh; do
-  logfile="$(mktemp)"
-  logfiles+=("$logfile")
+
+# Clean up temp files on exit
+cleanup() {
+  for logfile in "${script_logfiles[@]:-}"; do
+    [[ -f "$logfile" ]] && rm -f "$logfile"
+  done
+}
+trap cleanup EXIT
+
+shopt -s nullglob
+scripts=("$SCRIPTS_DIR"/*.sh)
+shopt -u nullglob
+
+if [ ${#scripts[@]} -eq 0 ]; then
+  echo "No scripts found in $SCRIPTS_DIR" | tee -a "$LOG_FILE"
+  exit 0
+fi
+
+for script in "${scripts[@]}"; do
+  logfile=$(mktemp /tmp/setup_script_log.XXXXXX)
+  script_logfiles+=("$logfile")
   script_names+=("$script")
-  echo "Executing $script. See logs in $logfile" >> "$LOG_FILE"
+  echo "Executing $(basename "$script"). See logs in $logfile" >> "$LOG_FILE"
   (
     echo "[START] $(date) $script"
     bash "$script"
@@ -35,15 +53,15 @@ done
 for i in "${!pids[@]}"; do
   pid=${pids[$i]}
   script=${script_names[$i]}
-  wait "$pid"
-  status=$?
-  if [ $status -ne 0 ]; then
-    echo "An error occurred while executing $script. Check the $LOG_FILE file for details." >> "$ERROR_LOG"
+  logfile=${script_logfiles[$i]}
+  if ! wait "$pid"; then
+    echo "An error occurred while executing $(basename "$script"). Check $logfile for details." | tee -a "$ERROR_LOG"
+    cat "$logfile" >> "$ERROR_LOG"
   fi
 done
 
 # Concatenate logs in order
-for logfile in "${logfiles[@]}"; do
+for logfile in "${script_logfiles[@]}"; do
   cat "$logfile" >> "$LOG_FILE"
   rm -f "$logfile"
 done
