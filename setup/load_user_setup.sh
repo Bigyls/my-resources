@@ -1,73 +1,42 @@
 #!/bin/bash
 
-START_TIME=$(date +%s)
+set -euo pipefail
+source "$(dirname "$0")/scripts/helpers/logs.sh"
 
-LOG_FILE="$(dirname "$0")/setup.log"
+# Define paths
+SETUP_DIR="$(dirname "$0")"
+MAKEFILE="$SETUP_DIR/Makefile"
+LOG_FILE="$SETUP_DIR/setup.log"
 ERROR_LOG="/workspace/error.log"
-SCRIPTS_DIR="$(dirname "$0")/scripts"
 
-echo "==== Setup started at $(date) ====" > "$LOG_FILE"
-
-pids=()
-script_logfiles=()
-script_names=()
-
-# Clean up temp files on exit
-cleanup() {
-  for logfile in "${script_logfiles[@]:-}"; do
-    [[ -f "$logfile" ]] && rm -f "$logfile"
-  done
-}
-trap cleanup EXIT
-
-shopt -s nullglob
-scripts=("$SCRIPTS_DIR"/*.sh)
-shopt -u nullglob
-
-if [ ${#scripts[@]} -eq 0 ]; then
-  echo "No scripts found in $SCRIPTS_DIR" | tee -a "$LOG_FILE"
-  exit 0
+# Check if Makefile exists
+if [ ! -f "$MAKEFILE" ]; then
+    log ERROR "Makefile not found at $MAKEFILE"
+    exit 1
 fi
 
-for script in "${scripts[@]}"; do
-  logfile=$(mktemp /tmp/setup_script_log.XXXXXX)
-  script_logfiles+=("$logfile")
-  script_names+=("$script")
-  echo "Executing $(basename "$script"). See logs in $logfile" >> "$LOG_FILE"
-  (
-    echo "[START] $(date) $script"
-    bash "$script"
-    status=$?
-    if [ $status -eq 0 ]; then
-      echo "[SUCCESS] $(date) $script"
-    else
-      echo "[ERROR] $(date) $script"
-    fi
-    echo "[END] $(date) $script"
-    exit $status
-  ) &> "$logfile" &
-  pids+=($!)
-done
+log START "Starting setup process"
+log START "Using Makefile at: $MAKEFILE"
 
-# Wait for all scripts and collect errors
-for i in "${!pids[@]}"; do
-  pid=${pids[$i]}
-  script=${script_names[$i]}
-  logfile=${script_logfiles[$i]}
-  if ! wait "$pid"; then
-    echo "An error occurred while executing $(basename "$script"). Check $logfile for details." | tee -a "$ERROR_LOG"
-    cat "$logfile" >> "$ERROR_LOG"
-  fi
-done
+# Run make with error handling and detailed output
+if ! make -C "$SETUP_DIR" -k -j 4 --debug=v 2>&1 | tee -a "$LOG_FILE"; then
+    log ERROR "Make command failed. Check $LOG_FILE for details"
+    log ERROR "Last 10 lines of log:"
+    tail -n 10 "$LOG_FILE" | while read -r line; do
+        log ERROR "$line"
+    done
+    exit 1
+fi
 
-# Concatenate logs in order
-for logfile in "${script_logfiles[@]}"; do
-  cat "$logfile" >> "$LOG_FILE"
-  rm -f "$logfile"
-done
+# Check if all targets were built successfully
+if ! make -C "$SETUP_DIR" -q; then
+    log ERROR "Some targets failed to build"
+    log ERROR "Failed targets:"
+    make -C "$SETUP_DIR" -k -j 4 --dry-run 2>&1 | grep -i "error\|fail" | while read -r line; do
+        log ERROR "$line"
+    done
+    exit 1
+fi
 
-END_TIME=$(date +%s)
-ELAPSED=$((END_TIME - START_TIME))
-
-echo "==== Setup finished at $(date) ====" >> "$LOG_FILE"
-echo "==== Elapsed time: ${ELAPSED} seconds ====" >> "$LOG_FILE"
+log SUCCESS "Setup completed successfully"
+log END "Setup process finished"
