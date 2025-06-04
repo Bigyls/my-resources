@@ -8,4 +8,4 @@ rm -f /root/.mozilla/firefox/*.Exegol/extensions/*
 rm -f /root/.mozilla/firefox/*.Exegol/places.sqlite
 
 log LOG "Applying Firefox policy..."
-cp "$(dirname "$0")/../firefox/policies.json" /usr/lib/firefox-esr/distribution/ 
+cp "$(dirname "$0")/../firefox/policies.json" /usr/lib/firefox-esr/distribution/

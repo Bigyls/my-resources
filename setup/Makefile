@@ -18,19 +18,16 @@ SCRIPT_NAMES := $(notdir $(SCRIPTS))
 
 # Default target
 all: clean_logs $(SCRIPT_NAMES)
-	@echo "Concatenating logs in order..." | tee -a $(LOG_FILE)
-	@for script in $(SCRIPT_NAMES); do \
-		if [ -f "$(TEMP_LOG_DIR)/$$script.log" ]; then \
-			cat "$(TEMP_LOG_DIR)/$$script.log" >> $(LOG_FILE); \
-		fi; \
-	done
+	@echo "==== Setup finished at $$(date) ====" >> $(LOG_FILE)
+	@echo "==== Elapsed time: $$(($$(date +%s) - $(START_TIME))) seconds ====" >> $(LOG_FILE)
 	@rm -rf $(TEMP_LOG_DIR)
 
 # Clean temporary logs
 clean_logs:
 	@rm -rf $(TEMP_LOG_DIR)
 	@mkdir -p $(TEMP_LOG_DIR)
-	@> $(LOG_FILE)
+	@echo "==== Setup started at $$(date) ====" > $(LOG_FILE)
+	$(eval START_TIME := $(shell date +%s))
 
 # Function to get dependencies for a script
 define GET_DEPS
@@ -45,19 +42,17 @@ endef
 # Auto-detect dependencies
 define SCRIPT_RULE
 $(notdir $(1)): $$(call HANDLE_ALL_DEPS,$$(call GET_DEPS,$(1)),$$@)
-	@echo "Running $$@..." > "$(TEMP_LOG_DIR)/$$@.log"
-	@bash -c '\
-		source $(LOG_FUNC_FILE); \
-		log START "Starting $$@"; \
-		if ! bash $(1); then \
-			log ERROR "Last 5 lines of output:"; \
-			tail -n 20 "$(TEMP_LOG_DIR)/$$@.log" | while read line; do echo "$$line"; done; exit 1; fi; \
-		log SUCCESS "$$@ completed successfully"; \
-		log END "Finished $$@"' 2>&1 | tee -a "$(TEMP_LOG_DIR)/$$@.log" || { \
-			echo "Error in $$@. Check $(LOG_FILE) for details." | tee -a $(ERROR_LOG); \
-			echo "Dependencies: $$(call GET_DEPS,$(1))" | tee -a $(ERROR_LOG); \
-			exit 1; \
-		}
+	@echo "Executing $(1). See logs in $(TEMP_LOG_DIR)/$$@.log" >> $(LOG_FILE)
+	@echo "[START] $$(date) $(1)" > "$(TEMP_LOG_DIR)/$$@.log"
+	@if ! bash $(1) >> "$(TEMP_LOG_DIR)/$$@.log" 2>&1; then \
+		echo "[ERROR] $$(date) $(1)" >> "$(TEMP_LOG_DIR)/$$@.log"; \
+		echo "An error occurred while executing $(1). Check the $(LOG_FILE) file for details." >> $(ERROR_LOG); \
+		exit 1; \
+	else \
+		echo "[SUCCESS] $$(date) $(1)" >> "$(TEMP_LOG_DIR)/$$@.log"; \
+	fi
+	@echo "[END] $$(date) $(1)" >> "$(TEMP_LOG_DIR)/$$@.log"
+	@flock $(LOG_FILE) -c 'cat "$(TEMP_LOG_DIR)/$$@.log" >> $(LOG_FILE)'
 endef
 
 # Create rules for all scripts
