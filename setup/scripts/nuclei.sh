@@ -2,7 +2,16 @@
 
 set -e
 
-git clone https://github.com/mdube99/custom-nuclei-templates "$(dirname "$0")/../nuclei/templates"
-git clone https://github.com/cipher387/juicyinfo-nuclei-templates "$(dirname "$0")/../nuclei/templates"
+if [ ! -d "$(dirname "$0")/../nuclei/templates/custom-nuclei-templates" ]; then
+    git clone https://github.com/mdube99/custom-nuclei-templates "$(dirname "$0")/../nuclei/templates/custom-nuclei-templates"
+fi
 
-nuclei -update-templates -t "$(dirname "$0")/../nuclei/templates"
+if [ ! -d "$(dirname "$0")/../nuclei/templates/juicyinfo-nuclei-templates" ]; then
+    git clone https://github.com/cipher387/juicyinfo-nuclei-templates "$(dirname "$0")/../nuclei/templates/juicyinfo-nuclei-templates"
+fi
+
+for template in "$(dirname "$0")/../nuclei/templates/*/*.yaml"; do
+    if [[ -f "$template" ]]; then
+        nuclei -validate-template "$template"
+    fi
+done

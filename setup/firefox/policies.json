@@ -1,7 +1,21 @@
 {
     "policies": {
         "DisableTelemetry": true,
+        "DisablePocket": true,
         "DisplayBookmarksToolbar": "always",
+        "FirefoxHome": {
+            "TopSites": false,
+            "SponsoredTopSites": false,
+            "Highlights": false,
+            "Pocket": false,
+            "SponsoredPocket": false,
+            "Snippets": false
+        },
+        "FirefoxSuggest": {
+            "WebSuggestions": false,
+            "SponsoredSuggestions": false,
+            "ImproveSuggest": false
+        },
         "ManagedBookmarks": [
             {
                 "toplevel_name": "Exegol Bookmarks"
@@ -98,68 +112,100 @@
         "ExtensionSettings_Comment": "To get the 'ID' of a plugins, you can query the extension page and search for the 'guid' field in the HTML source code.",
         "ExtensionSettings": {
             "wappalyzer@crunchlabz.com": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/wappalyzer/latest.xpi"
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/wappalyzer"
             },
             "{446900e4-71c2-419f-a6a7-df9c091e268b}": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi"
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager"
             },
-            "pwnfox@pwnfox": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/pwnfox/latest.xpi"
+            "PwnFox@bi.tk": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/pwnfox"
             },
-            "{b6c15b63-1a6e-4a8b-9c8b-1c0b7a0e4e22}": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/hacktools/latest.xpi"
+            "{f1423c11-a4e2-4709-a0f8-6d6a68c83d08}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/hacktools"
             },
-            "{eec6e1a0-1b7c-11e9-ab14-d663bd873d93}": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/shodan-addon/latest.xpi"
+            "firefox-extension@shodan.io": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/shodan-addon"
             },
-            "ghunt-companion@ghunt": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ghunt-companion/latest.xpi"
+            "{5167bfe9-226b-4af9-acf9-8b61f5aae627}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ghunt-companion"
             },
             "uBlock0@raymondhill.net": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "menupanel",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin"
             },
-            "jid1-93WyvpgvxzGATw@jetpack": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/traduzir-paginas-web/latest.xpi"
+            "{036a55b4-5e72-4d05-a06c-cba2dfcc134a}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/traduzir-paginas-web"
             },
-            "{3c078156-979c-498b-8990-85f7987dd929}": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/cookie-quick-manager/latest.xpi"
+            "{60f82f00-9ad5-4de5-b31c-b16a47c51558}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/cookie-quick-manager"
             },
-            "user-agent-string-switcher@linder": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/user-agent-string-switcher/latest.xpi"
+            "user-agent-switcher@ninetailed.ninja": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/uaswitcher"
             },
-            "easy-xss@PLACEHOLDER": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/easy-xss/latest.xpi"
+            "{07414fb5-d993-468f-ba39-dd1ac8438b4a}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "menupanel",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/easy-xss"
             },
             "{c45c406e-ab73-11d8-be73-000a95be3b12}": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/web-developer/latest.xpi"
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "menupanel",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/web-developer"
             },
-            "penetration-testing-kit@PLACEHOLDER": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/penetration-testing-kit/latest.xpi"
+            "{1ab3d165-d664-4bf2-adb7-fed77f46116f}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/penetration-testing-kit"
             },
-            "hackbar@nitrosb.com": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/firefox-hackbar/latest.xpi"
+            "{e369192d-43df-486e-aca0-d771eaed541d}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "menupanel",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/firefox-hackbar"
             },
-            "what-cms-is-this@PLACEHOLDER": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/what-cms-is-this/latest.xpi"
+            "{7be636bb-6095-4a4b-a977-2e2317c9e032}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/what-cms-is-this"
             },
-            "dotgit@PLACEHOLDER": {
-                "installation_mode": "force_installed",
-                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/dotgit/latest.xpi"
+            "{84cbda23-345f-4e74-9695-9a52b9599dc0}": {
+                "temporarily_allow_weak_signatures": true,
+                "private_browsing": true,
+                "default_area": "navbar",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/dotgit"
             }
         },
         "UserMessaging": {

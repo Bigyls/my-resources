@@ -50,7 +50,7 @@
                     "errors": "ui",
                     "extension_file": "/opt/tools/BurpSuiteCommunity/extensions/hackvertor-all.jar",
                     "extension_type": "java",
-                    "loaded": false,
+                    "loaded": true,
                     "name": "Hackvertor",
                     "output": "ui"
                 },
@@ -58,7 +58,7 @@
                     "errors": "ui",
                     "extension_file": "/opt/tools/BurpSuiteCommunity/extensions/LoggerPlusPlus.jar",
                     "extension_type": "java",
-                    "loaded": false,
+                    "loaded": true,
                     "name": "Logger++",
                     "output": "ui"
                 },
@@ -82,7 +82,7 @@
                     "errors": "ui",
                     "extension_file": "/opt/tools/BurpSuiteCommunity/extensions/jwt-editor-2.5.jar",
                     "extension_type": "java",
-                    "loaded": false,
+                    "loaded": true,
                     "name": "JWT Editor",
                     "output": "ui"
                 },
@@ -90,7 +90,7 @@
                     "errors": "ui",
                     "extension_file": "/opt/tools/BurpSuiteCommunity/extensions/autorize/Autorize.py",
                     "extension_type": "python",
-                    "loaded": false,
+                    "loaded": true,
                     "name": "Autorize",
                     "output": "ui"
                 },
