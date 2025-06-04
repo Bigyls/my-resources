@@ -3,12 +3,11 @@
 set -e
 
 # Web
-
 git clone https://github.com/chrislockard/api_wordlist /opt/lists/api_wordlist
 rm -rf /opt/lists/api_wordlist/.git /opt/lists/api_wordlist/README.md
 
 if [ ! -f /opt/lists/api_wordlists/api-documentation-endpoint.txt ]; then
-    wget -P /opt/lists/api_wordlists https://raw.githubusercontent.com/z5jt/API-documentation-Wordlist/main/api-documentation-endpoint.txt
+    wget -P /opt/lists/api_wordlists https://raw.githubusercontent.com/z5jt/API-documentation-Wordlist/refs/heads/main/API-Documentation-Wordlist/api-documentation-endpoint.txt
 fi
 
 # Usernames

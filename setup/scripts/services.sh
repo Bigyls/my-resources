@@ -2,4 +2,4 @@
 
 set -e
 
-neo4j start 
+neo4j start
