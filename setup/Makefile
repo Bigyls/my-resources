@@ -1,19 +1,15 @@
+# Configuration
 SCRIPTS_DIR := scripts
 LOG_FILE := /opt/my-resources/setup/setup.log
 ERROR_LOG := /workspace/error.log
 TEMP_LOG_DIR := /tmp/setup_logs
 LOG_FUNC_FILE := helpers/logs.sh
 
-# Create temp log directory
-$(shell mkdir -p $(TEMP_LOG_DIR))
-
-# Get list of scripts with full paths
+# Script discovery
 SCRIPTS := $(wildcard $(SCRIPTS_DIR)/*.sh)
-
-# Get list of script names without directory
 SCRIPT_NAMES := $(notdir $(SCRIPTS))
 
-# Mark all targets as phony to ensure they always run
+# Mark all targets as phony
 .PHONY: all $(SCRIPT_NAMES) clean_logs
 
 # Default target
@@ -29,17 +25,16 @@ clean_logs:
 	@echo "==== Setup started at $$(date) ====" > $(LOG_FILE)
 	$(eval START_TIME := $(shell date +%s))
 
-# Function to get dependencies for a script
+# Helper functions
 define GET_DEPS
 $(shell grep -m1 '^# DEPENDS_ON:' $(1) | awk -F': ' '{print $$2}' | tr ',' ' ')
 endef
 
-# Function to handle 'all' dependency
 define HANDLE_ALL_DEPS
 $(if $(filter all,$(1)),$(filter-out $(2),$(SCRIPT_NAMES)),$(1))
 endef
 
-# Auto-detect dependencies
+# Script execution template
 define SCRIPT_RULE
 $(notdir $(1)): $$(call HANDLE_ALL_DEPS,$$(call GET_DEPS,$(1)),$$@)
 	@echo "Executing $(1). See logs in $(TEMP_LOG_DIR)/$$@.log" >> $(LOG_FILE)
@@ -55,5 +50,5 @@ $(notdir $(1)): $$(call HANDLE_ALL_DEPS,$$(call GET_DEPS,$(1)),$$@)
 	@flock $(LOG_FILE) -c 'cat "$(TEMP_LOG_DIR)/$$@.log" >> $(LOG_FILE)'
 endef
 
-# Create rules for all scripts
+# Generate rules for all scripts
 $(foreach script,$(SCRIPTS),$(eval $(call SCRIPT_RULE,$(script))))
