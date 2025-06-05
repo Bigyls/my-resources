@@ -25,7 +25,7 @@ clean_logs:
 	@echo "==== Setup started at $$(date) ====" > $(LOG_FILE)
 	$(eval START_TIME := $(shell date +%s))
 
-# Helper functions
+# Get dependancies
 define GET_DEPS
 $(shell grep -m1 '^# DEPENDS_ON:' $(1) | awk -F': ' '{print $$2}' | tr ',' ' ')
 endef
