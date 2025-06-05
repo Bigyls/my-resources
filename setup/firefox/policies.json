@@ -112,96 +112,112 @@
         "ExtensionSettings_Comment": "To get the 'ID' of a plugins, you can query the extension page and search for the 'guid' field in the HTML source code.",
         "ExtensionSettings": {
             "wappalyzer@crunchlabz.com": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/wappalyzer"
             },
             "{446900e4-71c2-419f-a6a7-df9c091e268b}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager"
             },
             "PwnFox@bi.tk": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/pwnfox"
             },
             "{f1423c11-a4e2-4709-a0f8-6d6a68c83d08}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/hacktools"
             },
             "firefox-extension@shodan.io": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/shodan-addon"
             },
             "{5167bfe9-226b-4af9-acf9-8b61f5aae627}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ghunt-companion"
             },
             "uBlock0@raymondhill.net": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "menupanel",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin"
             },
             "{036a55b4-5e72-4d05-a06c-cba2dfcc134a}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/traduzir-paginas-web"
             },
             "{60f82f00-9ad5-4de5-b31c-b16a47c51558}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/cookie-quick-manager"
             },
             "user-agent-switcher@ninetailed.ninja": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/uaswitcher"
             },
             "{07414fb5-d993-468f-ba39-dd1ac8438b4a}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "menupanel",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/easy-xss"
             },
             "{c45c406e-ab73-11d8-be73-000a95be3b12}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "menupanel",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/web-developer"
             },
             "{1ab3d165-d664-4bf2-adb7-fed77f46116f}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/penetration-testing-kit"
             },
             "{e369192d-43df-486e-aca0-d771eaed541d}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "menupanel",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/firefox-hackbar"
             },
             "{7be636bb-6095-4a4b-a977-2e2317c9e032}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
                 "install_url": "https://addons.mozilla.org/firefox/downloads/latest/what-cms-is-this"
             },
             "{84cbda23-345f-4e74-9695-9a52b9599dc0}": {
+                "installation_mode": "force_installed",
                 "temporarily_allow_weak_signatures": true,
                 "private_browsing": true,
                 "default_area": "navbar",
