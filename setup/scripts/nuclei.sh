@@ -5,22 +5,41 @@ source "$(dirname "$0")/helpers/logs.sh"
 
 TEMPLATES_DIR="$(dirname "$0")/../nuclei/templates"
 
-log LOG "Cloning custom-nuclei-templates if needed..."
-if [ ! -d "$TEMPLATES_DIR/custom-nuclei-templates" ]; then
-    git clone --depth 1 https://github.com/mdube99/custom-nuclei-templates "$TEMPLATES_DIR/custom-nuclei-templates"
-fi
+# Define template repositories
+declare -A templates=(
+    ["custom-nuclei-templates"]="https://github.com/mdube99/custom-nuclei-templates"
+    ["juicyinfo-nuclei-templates"]="https://github.com/cipher387/juicyinfo-nuclei-templates"
+)
 
-log LOG "Cloning juicyinfo-nuclei-templates if needed..."
-if [ ! -d "$TEMPLATES_DIR/juicyinfo-nuclei-templates" ]; then
-    git clone --depth 1 https://github.com/cipher387/juicyinfo-nuclei-templates "$TEMPLATES_DIR/juicyinfo-nuclei-templates"
-fi
-
-log LOG "Validating templates..."
-for template in "$TEMPLATES_DIR"/*/*.yaml; do
-    if [[ -f "$template" ]]; then
-        nuclei -update-templates -t "$template"
+log LOG "Cloning template repositories..."
+for repo_name in "${!templates[@]}"; do
+    repo_path="$TEMPLATES_DIR/$repo_name"
+    if [ ! -d "$repo_path/.git" ]; then
+        log LOG "Cloning ${repo_name}..."
+        git clone --depth 1 "${templates[$repo_name]}" "$repo_path"
+        rm -rf .git
+    else
+        log LOG "Skipping ${repo_name} - already cloned"
     fi
 done
 
-log LOG "Cleanning nuclei tmp folders..."
-rm -rf /tmp/nuclei*
+log LOG "Validating templates..."
+template_count=0
+while IFS= read -r -d '' template; do
+    if [[ -f "$template" ]]; then
+        log LOG "Validating template: $(basename "$template")"
+        if nuclei -update-templates -t "$template"; then
+            ((template_count++))
+        else
+            log ERROR "Failed to validate template: $(basename "$template")"
+        fi
+    fi
+done < <(find "$TEMPLATES_DIR" -type f -name "*.yaml" -print0)
+log LOG "Successfully validated ${template_count} templates"
+
+log LOG "Cleaning nuclei tmp folders..."
+if rm -rf /tmp/nuclei*; then
+    log LOG "Successfully cleaned nuclei temporary files"
+else
+    log ERROR "Failed to clean nuclei temporary files"
+fi

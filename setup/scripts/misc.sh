@@ -7,7 +7,7 @@ log LOG "Updating /opt/.exegol_shells_rc..."
 sed -i 's/"%m"/"${HOSTNAME#exegol-}"/g' /opt/.exegol_shells_rc
 
 log LOG "Copying rockyou.txt... for better fzf-wordlists"
-cp /opt/lists/rockyou.txt /opt/lists/arockyou.txt
+cp /opt/lists/rockyou.txt /opt/lists/aaaaaaaaaaaaaa.txt
 
 log LOG "Fixing permissions in /workspace..."
 find /workspace/ -type d -exec chmod 770 {} \; -exec chmod g+s {} \;

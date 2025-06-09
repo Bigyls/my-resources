@@ -8,17 +8,32 @@ BURPSUITE_EXTENSIONS_PATH='/opt/tools/BurpSuiteCommunity/extensions'
 log LOG "Creating extensions directory..."
 mkdir -p "$BURPSUITE_EXTENSIONS_PATH"
 
+# Define extensions to download
+declare -A extensions=(
+    ["hackvertor-all.jar"]="https://github.com/PortSwigger/hackvertor/releases/download/latest_hackvertor_release/hackvertor-all.jar"
+    ["LoggerPlusPlus.jar"]="https://github.com/PortSwigger/logger-plus-plus/releases/download/latest/LoggerPlusPlus.jar"
+    ["sharpener.jar"]="https://github.com/lap1nou/sharpener/releases/download/latest2/sharpener.jar"
+    ["piper.jar"]="https://github.com/lap1nou/piper/releases/download/latest/piper.jar"
+    ["jwt-editor-2.5.jar"]="https://github.com/lap1nou/jwt-editor/releases/download/latest/jwt-editor-2.5.jar"
+)
+
 log LOG "Downloading Burp Suite extensions..."
-wget -nc 'https://github.com/PortSwigger/hackvertor/releases/download/latest_hackvertor_release/hackvertor-all.jar' -O "${BURPSUITE_EXTENSIONS_PATH}/hackvertor-all.jar"
-wget -nc 'https://github.com/PortSwigger/logger-plus-plus/releases/download/latest/LoggerPlusPlus.jar' -O "${BURPSUITE_EXTENSIONS_PATH}/LoggerPlusPlus.jar"
-wget -nc 'https://github.com/lap1nou/sharpener/releases/download/latest2/sharpener.jar' -O "${BURPSUITE_EXTENSIONS_PATH}/sharpener.jar"
-wget -nc 'https://github.com/lap1nou/piper/releases/download/latest/piper.jar' -O "${BURPSUITE_EXTENSIONS_PATH}/piper.jar"
-wget -nc 'https://github.com/lap1nou/jwt-editor/releases/download/latest/jwt-editor-2.5.jar' -O "${BURPSUITE_EXTENSIONS_PATH}/jwt-editor-2.5.jar"
+for jar_file in "${!extensions[@]}"; do
+    target_path="${BURPSUITE_EXTENSIONS_PATH}/${jar_file}"
+    if [ ! -f "$target_path" ]; then
+        log LOG "Downloading ${jar_file}..."
+        wget -nc "${extensions[$jar_file]}" -O "$target_path"
+    else
+        log LOG "Skipping ${jar_file} - already exists"
+    fi
+done
 
 log LOG "Cloning Autorize extension..."
 mkdir -p "$BURPSUITE_EXTENSIONS_PATH/autorize"
 if [ ! -d "$BURPSUITE_EXTENSIONS_PATH/autorize/.git" ]; then
-  git clone https://github.com/PortSwigger/autorize.git "$BURPSUITE_EXTENSIONS_PATH/autorize"
+    git clone --depth 1 https://github.com/PortSwigger/autorize.git "$BURPSUITE_EXTENSIONS_PATH/autorize"
+else
+    log LOG "Skipping Autorize - already cloned"
 fi
 
 log LOG "Copying Burp Suite user config..."
