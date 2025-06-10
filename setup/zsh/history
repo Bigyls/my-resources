@@ -1,2 +1,3 @@
 # Config file dedicated to the user's personal history shared between all exegol containers
 
+faketime "$(rdate -n $DC_IP -p | awk '{print $2, $3, $4}' | date -f - "+%Y-%m-%d %H:%M:%S")" zsh
