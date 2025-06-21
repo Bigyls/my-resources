@@ -2,7 +2,7 @@
 
 START_TIME=$(date +%s)
 
-LOG_FILE="/workspace/setup.log"
+LOG_FILE="/.exegol/setup.log"
 ERROR_LOG="/workspace/error.log"
 SCRIPTS_DIR="$(dirname "$0")/scripts"
 
@@ -57,7 +57,7 @@ for i in "${!pids[@]}"; do
   script=${script_names[$i]}
   tmp_logfile=${tmp_script_logfiles[$i]}
   if ! wait "$pid"; then
-    log ERROR "An error occurred while executing $(basename "$script"). Check $tmp_logfile for details." >> "$LOG_FILE"
+    log ERROR "An error occurred while executing $(basename "$script"). Check "$LOG_FILE" for details." >> "$ERROR_FILE"
     cat "$tmp_logfile" >> "$ERROR_LOG"
     echo -e "\n------\n" >> "$ERROR_LOG"
   fi
