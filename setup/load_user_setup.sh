@@ -1,49 +1,77 @@
 #!/bin/bash
 
-set -euo pipefail
-source "$(dirname "$0")/scripts/helpers/logs.sh"
+START_TIME=$(date +%s)
 
-# Configuration
-readonly SETUP_DIR="$(dirname "$0")"
-readonly MAKEFILE="$SETUP_DIR/Makefile"
-readonly LOG_FILE="$SETUP_DIR/setup.log"
-readonly ERROR_LOG="/workspace/error.log"
-readonly NUM_CORES=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+LOG_FILE="/workspace/setup.log"
+ERROR_LOG="/workspace/error.log"
+SCRIPTS_DIR="$(dirname "$0")/scripts"
 
-# Functions
-check_prerequisites() {
-    if [ ! -f "$MAKEFILE" ]; then
-        log ERROR "Makefile not found at $MAKEFILE"
-        echo "Error: Makefile not found at $MAKEFILE" >> "$ERROR_LOG"
-        return 1
+source "$SCRIPTS_DIR/helpers/logs.sh"
+
+log LOG "==== Setup started at $(date) ====" > "$LOG_FILE"
+
+pids=()
+tmp_script_logfiles=()
+script_names=()
+
+# Clean up temp files on exit
+cleanup() {
+  for tmp_logfile in "${tmp_script_logfiles[@]:-}"; do
+    [[ -f "$tmp_logfile" ]] && rm -f "$tmp_logfile"
+  done
+}
+trap cleanup EXIT
+
+shopt -s nullglob
+scripts=("$SCRIPTS_DIR"/*.sh)
+shopt -u nullglob
+
+if [ ${#scripts[@]} -eq 0 ]; then
+  log ERROR "No scripts found in $SCRIPTS_DIR" >> "$LOG_FILE"
+  exit 0
+fi
+
+for script in "${scripts[@]}"; do
+  tmp_logfile=$(mktemp /tmp/setup.log.XXXXXX)
+  tmp_script_logfiles+=("$tmp_logfile")
+  script_names+=("$script")
+  log LOG "Executing $(basename "$script"). See logs in $tmp_logfile"
+  (
+    log START "$script"
+    bash "$script"
+    status=$?
+    if [ $status -eq 0 ]; then
+      log SUCCESS "$script"
+    else
+      log ERROR "$script"
     fi
-    return 0
-}
+    log END "$script"
+    exit $status
+  ) &> "$tmp_logfile" &
+  pids+=($!)
+done
 
-run_setup() {
-    log START "Starting setup process"
-    log START "Using Makefile at: $MAKEFILE"
-    log INFO "Running with $NUM_CORES parallel jobs"
+# Wait for all scripts and collect errors
+for i in "${!pids[@]}"; do
+  pid=${pids[$i]}
+  script=${script_names[$i]}
+  tmp_logfile=${tmp_script_logfiles[$i]}
+  if ! wait "$pid"; then
+    log ERROR "An error occurred while executing $(basename "$script"). Check $tmp_logfile for details." >> "$LOG_FILE"
+    cat "$tmp_logfile" >> "$ERROR_LOG"
+    echo -e "\n------\n" >> "$ERROR_LOG"
+  fi
+done
 
-    if ! make -C "$SETUP_DIR" -k -j "$NUM_CORES" 2>&1 | tee -a "$LOG_FILE"; then
-        log ERROR "Make command failed. Check $LOG_FILE for details"
-        log ERROR "Last 10 lines of log:"
-        tail -n 10 "$LOG_FILE" | while read -r line; do
-            log ERROR "$line"
-            echo "$line" >> "$ERROR_LOG"
-        done
-        echo "Setup process failed. See $LOG_FILE for full details." >> "$ERROR_LOG"
-        return 1
-    fi
-    return 0
-}
+# Concatenate logs in order
+for tmp_logfile in "${tmp_script_logfiles[@]}"; do
+  cat "$tmp_logfile" >> "$LOG_FILE"
+  echo -e "\n------\n" >> "$LOG_FILE"
+  rm -f "$tmp_logfile"
+done
 
-# Main execution
-main() {
-    check_prerequisites || exit 1
-    run_setup || exit 1
-    log SUCCESS "Setup completed successfully"
-    log END "Setup process finished"
-}
+END_TIME=$(date +%s)
+ELAPSED=$((END_TIME - START_TIME))
 
-main
+log LOG "==== Setup finished at $(date) ====" >> "$LOG_FILE"
+log LOG "==== Elapsed time: ${ELAPSED} seconds ====" >> "$LOG_FILE"
