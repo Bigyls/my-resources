@@ -1,0 +1,14 @@
+format = """${custom.user}${env_var.TARGET}"""
+
+add_newline = false
+
+[custom.user]
+command = '[ -n "$DOMAIN" ] && echo "$USER@$DOMAIN" || echo "$USER"'
+when = 'test -n "$USER"'
+style = 'yellow'
+format = '\[[$output]($style)\]'
+
+[env_var.TARGET]
+variable = "TARGET"
+style = "yellow"
+format = '\[[$env_value]($style)\]'

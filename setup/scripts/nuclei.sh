@@ -17,6 +17,8 @@ for repo_name in "${!templates[@]}"; do
     if [ ! -d "$repo_path/.git" ]; then
         log LOG "Cloning ${repo_name}..."
         git clone --depth 1 "${templates[$repo_name]}" "$repo_path"
+        cd "$repo_path" || exit 1
+        log LOG "Cleaning up ${repo_name}..."
         rm -rf .git && rm -rf *.md
     else
         log LOG "Skipping ${repo_name} - already cloned"
