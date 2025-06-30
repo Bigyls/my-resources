@@ -1,6 +1,9 @@
 # Logs
 setup/setup.log
 
+# Unecessary nuclei data
+setup/nuclei/**
+
 # ---- macOS ---- #
 
 # Folder view configuration files
