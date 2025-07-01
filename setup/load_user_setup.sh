@@ -14,8 +14,8 @@ pids=()
 tmp_script_logfiles=()
 script_names=()
 
-# Clean up temp files on exit
 cleanup() {
+  log LOG "Cleaning up temporary log files..."
   for tmp_logfile in "${tmp_script_logfiles[@]:-}"; do
     [[ -f "$tmp_logfile" ]] && rm -f "$tmp_logfile"
   done

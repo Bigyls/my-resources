@@ -1,5 +1,4 @@
 #!/bin/bash
-# DEPENDS_ON: all
 
 set -euo pipefail
 source "$(dirname "$0")/helpers/logs.sh"
@@ -10,4 +9,4 @@ pip3 install --user hekatomb
 log LOG "Installing tools with pipx..."
 pipx install ghunt
 pipx install secator
-pipx install git+https://github.com/nccgroup/GTFOBLookup 
+pipx install git+https://github.com/nccgroup/GTFOBLookup

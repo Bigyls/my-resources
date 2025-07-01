@@ -1,5 +1,4 @@
 #!/bin/bash
-# DEPENDS_ON: apt.sh, misc.sh
 
 set -euo pipefail
 source "$(dirname "$0")/helpers/logs.sh"

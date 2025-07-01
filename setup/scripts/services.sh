@@ -1,5 +1,4 @@
 #!/bin/bash
-# DEPENDS_ON: all
 
 set -euo pipefail
 source "$(dirname "$0")/helpers/logs.sh"
