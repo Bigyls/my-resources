@@ -8,14 +8,14 @@ SCRIPTS_DIR="$(dirname "$0")/scripts"
 
 source "$SCRIPTS_DIR/helpers/logs.sh"
 
-log LOG "==== Setup started at $(date) ====" > "$LOG_FILE"
+log INFO "==== Setup started at $(date) ====" > "$LOG_FILE"
 
 pids=()
 tmp_script_logfiles=()
 script_names=()
 
 cleanup() {
-  log LOG "Cleaning up temporary log files..."
+  log INFO "Cleaning up temporary log files..."
   for tmp_logfile in "${tmp_script_logfiles[@]:-}"; do
     [[ -f "$tmp_logfile" ]] && rm -f "$tmp_logfile"
   done
@@ -35,7 +35,7 @@ for script in "${scripts[@]}"; do
   tmp_logfile=$(mktemp /tmp/setup.log.XXXXXX)
   tmp_script_logfiles+=("$tmp_logfile")
   script_names+=("$script")
-  log LOG "Executing $(basename "$script"). See logs in $tmp_logfile"
+  log INFO "Executing $(basename "$script"). See logs in $tmp_logfile"
   (
     log START "$script"
     bash "$script"
@@ -73,5 +73,5 @@ done
 END_TIME=$(date +%s)
 ELAPSED=$((END_TIME - START_TIME))
 
-log LOG "==== Setup finished at $(date) ====" >> "$LOG_FILE"
-log LOG "==== Elapsed time: ${ELAPSED} seconds ====" >> "$LOG_FILE"
+log INFO "==== Setup finished at $(date) ====" >> "$LOG_FILE"
+log INFO "==== Elapsed time: ${ELAPSED} seconds ====" >> "$LOG_FILE"
