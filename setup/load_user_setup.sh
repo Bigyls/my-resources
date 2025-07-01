@@ -8,6 +8,8 @@ SCRIPTS_DIR="$(dirname "$0")/scripts"
 
 source "$SCRIPTS_DIR/helpers/logs.sh"
 
+rm -rf "$LOG_FILE" "$ERROR_LOG"
+
 log INFO "==== Setup started at $(date) ====" > "$LOG_FILE"
 
 pids=()

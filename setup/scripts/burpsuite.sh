@@ -5,6 +5,7 @@ source "$(dirname "$0")/helpers/logs.sh"
 
 BURPSUITE_EXTENSIONS_PATH='/opt/tools/BurpSuiteCommunity/extensions'
 
+
 log INFO "Creating extensions directory..."
 mkdir -p "$BURPSUITE_EXTENSIONS_PATH"
 
