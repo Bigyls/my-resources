@@ -19,23 +19,23 @@ declare -A extensions=(
 )
 
 log INFO "Downloading Burp Suite extensions..."
-for jar_file in "${!extensions[@]}"; do
-    target_path="${BURPSUITE_EXTENSIONS_PATH}/${jar_file}"
-    if [ ! -f "$target_path" ]; then
-        log INFO "Downloading ${jar_file}..."
-        wget -nc "${extensions[$jar_file]}" -O "$target_path"
-    else
-        log INFO "Skipping ${jar_file} - already exists"
-    fi
-done
+    for jar_file in "${!extensions[@]}"; do
+        target_path="${BURPSUITE_EXTENSIONS_PATH}/${jar_file}"
+        if [ ! -f "$target_path" ]; then
+            log INFO "Downloading ${jar_file}..."
+            wget -nc "${extensions[$jar_file]}" -O "$target_path"
+        else
+            log INFO "Skipping ${jar_file} - already exists"
+        fi
+    done
 
 log INFO "Cloning Autorize extension..."
-mkdir -p "$BURPSUITE_EXTENSIONS_PATH/autorize"
-if [ ! -d "$BURPSUITE_EXTENSIONS_PATH/autorize/.git" ]; then
-    git clone --depth 1 https://github.com/PortSwigger/autorize.git "$BURPSUITE_EXTENSIONS_PATH/autorize"
-else
-    log INFO "Skipping Autorize - already cloned"
-fi
+    mkdir -p "$BURPSUITE_EXTENSIONS_PATH/autorize"
+    if [ ! -d "$BURPSUITE_EXTENSIONS_PATH/autorize/.git" ]; then
+        git clone --depth 1 https://github.com/PortSwigger/autorize.git "$BURPSUITE_EXTENSIONS_PATH/autorize"
+    else
+        log INFO "Skipping Autorize - already cloned"
+    fi
 
 log INFO "Copying Burp Suite user config..."
-cp "$(dirname "$0")/../burpsuite/UserConfigCommunity.json" ~/.BurpSuite/UserConfigCommunity.json
+    cp "$(dirname "$0")/../burpsuite/UserConfigCommunity.json" ~/.BurpSuite/UserConfigCommunity.json
