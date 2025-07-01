@@ -11,6 +11,12 @@ declare -A templates=(
     ["juicyinfo-nuclei-templates"]="https://github.com/cipher387/juicyinfo-nuclei-templates"
 )
 
+log LOG "Cleaning template repositories..."
+if [ -d "$TEMPLATES_DIR" ]; then
+    rm -rf "$TEMPLATES_DIR"
+    log SUCCESS "Removed existing templates directory..."
+fi
+
 log LOG "Cloning template repositories..."
 for repo_name in "${!templates[@]}"; do
     repo_path="$TEMPLATES_DIR/$repo_name"
@@ -41,7 +47,7 @@ log LOG "Successfully validated ${template_count} templates"
 
 log LOG "Cleaning nuclei tmp folders..."
 if rm -rf /tmp/nuclei*; then
-    log LOG "Successfully cleaned nuclei temporary files"
+    log SUCCESS "Cleaned nuclei temporary files"
 else
     log ERROR "Failed to clean nuclei temporary files"
 fi
