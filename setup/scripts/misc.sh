@@ -20,3 +20,6 @@ log LOG "Installing starship and updating shell..."
 curl -sS https://starship.rs/install.sh | sh -s -- -y
 cp /opt/my-resources/setup/zsh/.zshrc ~/.zshrc
 cp /opt/my-resources/setup/zsh/startship.toml ~/.config/starship.toml
+
+log LOG "Downloading snmp extended mibs..."
+download-mibs
