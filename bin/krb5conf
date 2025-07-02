@@ -56,8 +56,8 @@ def main():
     print("[*] Configuration Data:")
     print(config_data)
 
-    confirm = input("\n[!] Above Configuration will overwrite /etc/krb5.conf, are you sure? [y/N] ")
-    if confirm.lower() != "y":
+    confirm = input("\n[!] Above Configuration will overwrite /etc/krb5.conf, are you sure? [Y/n] ").strip().lower()
+    if confirm not in ["", "y", "yes"]:
         print("[!] Aborting")
         sys.exit(1)
 
