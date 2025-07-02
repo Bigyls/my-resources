@@ -1,6 +1,3 @@
-# Logs
-setup/setup.log
-
 # Unecessary nuclei data
 setup/nuclei/**
 
