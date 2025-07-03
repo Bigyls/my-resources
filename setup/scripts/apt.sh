@@ -16,4 +16,4 @@ log INFO "Installing packages..."
         snmp-mibs-downloader
 
     log INFO "Downloading snmp extended mibs..." # Here because depends on the package snmp-mibs-downloader
-      download-mibs
+        download-mibs
