@@ -22,6 +22,9 @@ Usage: krb5conf $DOMAIN $DC_NAME
 """
 
 def get_config(domain_fqdn: str, dc_name: str):
+    """
+    Generate the krb5.conf configuration content for the given domain and DC.
+    """
     return f"""[libdefault]
         default_realm = {domain_fqdn.upper()}
 
@@ -38,6 +41,9 @@ def get_config(domain_fqdn: str, dc_name: str):
 
 
 def request_root():
+    """
+    Relaunch the script with sudo if not running as root.
+    """
     if os.geteuid() != 0:
         print("[*] This script must be run as root")
         args = ["sudo", sys.executable] + sys.argv + [os.environ]
@@ -45,6 +51,9 @@ def request_root():
 
 
 def main():
+    """
+    Parse arguments, confirm overwrite, and write the krb5.conf file.
+    """
     parser = argparse.ArgumentParser(description="Configure krb5.conf for evil-winrm")
     parser.add_argument("domain_fqdn", help="Domain FQDN")
     parser.add_argument("dc_name", help="Domain Controller Name")
@@ -56,11 +65,13 @@ def main():
     print("[*] Configuration Data:")
     print(config_data)
 
+    # Confirm with the user before overwriting the config file
     confirm = input("\n[!] Above Configuration will overwrite /etc/krb5.conf, are you sure? [Y/n] ").strip().lower()
     if confirm not in ["", "y", "yes"]:
         print("[!] Aborting")
         sys.exit(1)
 
+    # Write the configuration to /etc/krb5.conf
     with open("/etc/krb5.conf", "w") as f:
         f.write(config_data)
 

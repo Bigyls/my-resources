@@ -16,37 +16,38 @@ if [[ "$EUID" -ne 0 ]]; then
     exit 1
 fi
 
-# Constants
+# Color constants for output
 RED="\033[0;31m"
 GREEN="\033[0;32m"
 ENDCOLOR="\033[0m"
+# Path to dnsmasq configuration directory
 config_path="/etc/dnsmasq.d/"
 
-# Function to display messages
+# Function to display colored log messages
 log_message() {
     local message=$1
     local color=$2
     echo -e "${color}${message}${ENDCOLOR}"
 }
 
-# Get TLD from domain
+# Extract the top-level domain (TLD) from a domain string
 get_tld() {
     dom_array=(`/usr/bin/echo $domain | /usr/bin/tr '.' '\n'`)
     echo ${dom_array[${#dom_array[@]}-1]}
-
 }
 
-# Check if the host is a valid IP address
+# Validate if the provided string is a valid IPv4 address
 is_valid_ip() {
     local ip=$1
     [[ $ip =~ ^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]
 }
 
+# Restart the dnsmasq service to apply changes
 restart_dnsmasq() {
     pkill dnsmasq; dnsmasq
 }
 
-# Add domain to dnsmasq
+# Add a domain entry to dnsmasq configuration
 add_domain() {
     if [[ $# -ne 3 ]]; then
         log_message "[-] Incorrect number of arguments." "$RED"
@@ -65,16 +66,20 @@ add_domain() {
     local tld=$(get_tld "$domain")
     local config_file="${config_path}${tld}.conf"
 
+    # If config file doesn't exist, create it with a default DNS server
     [[ ! -e "$config_file" ]] && echo "server=8.8.8.8" > "$config_file"
 
+    # Prevent duplicate domain entries
     if grep -q "${domain}" "$config_file"; then
         log_message "[+] Domain already exists." "$GREEN"
         exit 1
     fi
 
+    # Add the domain mapping
     echo "address=/.${domain}/${host}" >> "$config_file"
     restart_dnsmasq
 
+    # Confirm the domain was added
     if grep -q "${domain}" "$config_file"; then
         log_message "[+] Successful Update." "$GREEN"
     else
@@ -82,7 +87,7 @@ add_domain() {
     fi
 }
 
-# Remove domain from dnsmasq
+# Remove a domain entry from dnsmasq configuration
 remove_domain() {
     if [[ $# -ne 2 ]]; then
         log_message "[-] Incorrect number of arguments." "$RED"
@@ -94,10 +99,13 @@ remove_domain() {
     local config_file="${config_path}${tld}.conf"
 
     if [[ -e "$config_file" ]]; then
+        # Remove the domain line from the config file
         sed -i "/${domain}/d" "$config_file"
+        # If only the default server line remains, remove the config file
         [[ $(wc -l < "$config_file") -eq 1 ]] && rm "$config_file"
         restart_dnsmasq
 
+        # Confirm the domain was removed
         if ! grep -q "${domain}" "$config_file" 2>/dev/null; then
             log_message "[+] Successful Update." "$GREEN"
         else
@@ -108,9 +116,10 @@ remove_domain() {
     fi
 }
 
-# List domains from dnsmasq
+# List TLDs or domains under a TLD
 list_domains() {
     if [[ $# -eq 1 ]]; then
+        # List all TLDs (config files)
         local tlds=($(ls ${config_path} | awk -F'.' '{print $1}'))
 
         if [[ ${#tlds[@]} -eq 0 ]]; then
@@ -123,6 +132,7 @@ list_domains() {
     fi
 
     if [[ $# -eq 2 ]]; then
+        # List all domains under a specific TLD
         local domain=$2
         local tld=$(get_tld "$domain")
         local config_file="${config_path}${tld}.conf"
@@ -136,7 +146,7 @@ list_domains() {
     fi
 }
 
-# Main logic using a case statement
+# Main logic using a case statement to handle user commands
 if [[ $# -eq 0 ]]; then
     usage
 fi
@@ -156,4 +166,3 @@ case $1 in
         usage
         ;;
 esac
-

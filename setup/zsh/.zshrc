@@ -20,6 +20,7 @@ if [[ -o interactive ]]; then
 
   TIME_="%{$fg[white]%}[%{$fg[red]%}%D{%b %d, %Y - %T (%Z)}%{$fg[white]%}]%{$reset_color%}"
 
+# Updated prompt using starship for environment variables
   update_prompt() {
     PROMPT="$LOGGING$TIME_$(starship prompt)%{$FX[bold]$FG[013]%} $EXEGOL_HOSTNAME %{$fg_bold[blue]%}%(!.%1~.%c) $(prompt_char)%{$reset_color%} "
   }
