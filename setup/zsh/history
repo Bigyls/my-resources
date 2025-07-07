@@ -1,5 +1,11 @@
 # Config file dedicated to the user's personal history shared between all exegol containers
 
+# ----- MISC ----- #
+
+faketime "$(rdate -n $TARGET -p | awk '{print $2, $3, $4}' | date -f - "+%Y-%m-%d %H:%M:%S")" zsh
+export KRB5CCNAME=$CCACHE_FILE # Set Kerberos cache file
+unset KRB5CCNAME
+
 # ----- Active Enumeration ----- #
 
 # DNS
@@ -81,6 +87,7 @@ rpcclient -W "$WORKGROUP" -U "$USER" "$TARGET" # -W: Workgroup
 impacket-rpcdump -port 135 "$TARGET" | grep -E "MS-EFSRPC|MS-RPRN|MS-PAR" # MS-EFSRPC: It might be vulnerable to PetitPotam, MS-RPRN, MS-PAR: It might be vulnerable to PrintNightmare.
 
 # SMB
+smbserver.py -smb2support EXEGOL . -username exegol -password exegol
 nmap -v -A -O -sC -sV -Pn --osscan-guess --script "smb-enum*" -p 139,445 "$TARGET"
 nbtscan -r "$TARGET"/24
 nxc smb "$TARGET" -u '' -p '' # Null session enumeration
@@ -143,6 +150,7 @@ gobuster dir -u http://$TARGET -w `fzf-wordlists` -p pattern.txt # pattern.txt c
 
 # Password Attacks
 keepass2john $KDBX_FILE > $HASH_FILE
+office2john "$OFFICE_FILE" | cut -d ":" -f2 > "$OFFICE_FILE.hash"
 john --format=keepass --wordlist=`fzf-wordlists` $HASH_FILE
 cewl "$DOMAIN" -w "$OUTFILE" # generating wordlist based on information from a website
 crunch "$MIN_LEN" "$MAX_LEN" "$CARSHET"
